@@ -105,3 +105,10 @@ class App {
 }
 
 const app = new App();
+
+
+const run1 = new Running([23, -56], 12, 40, 60);
+const cyc1 = new Cycling([45,-23], 20, 60, 500)
+
+console.log(run1);
+console.log(cyc1);
