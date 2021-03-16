@@ -14,19 +14,21 @@ const inputElevation = document.querySelector(".form__input--elevation");
 // MAIN CLASS
 
 class App {
-  #map;
-  #mapEvent;
-  #lngLat;
-
   constructor() {
+    this.map;
     this._getCurrentLocation();
     form.addEventListener("submit", this._submitForm.bind(this));
     inputType.addEventListener("change", this._toggleformFields);
-    containerWorkouts.addEventListener("click", this._moveMapToPosition.bind(this));
+    containerWorkouts.addEventListener(
+      "click",
+      this._moveMapToPosition.bind(this)
+    );
     this.workout;
     this.workouts = [];
-    this.mapZoomLevel =  14;
+    this.mapZoomLevel = 14;
     this._getFromLocalStorage();
+    this.lngLat;
+    this.mapEvent;
   }
 
   // get current location
@@ -49,56 +51,73 @@ class App {
     mapboxgl.accessToken = api.API_KEY; // integrate mapbox api key
 
     const coords = [longitude, latitude];
-    this.#map = new mapboxgl.Map({
+    this.map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
       center: coords, // starting position [lng, lat]
       zoom: this.mapZoomLevel, // starting zoom
     });
 
-    this._createMarker(coords, "you are here!");
+    this._createMarker(coords, "You are here!", null);
 
     // Handling click on map event
-    this.#map.on("click", this._showForm.bind(this));
-    
-    if(this.workouts){
-      this.workouts.forEach(work => {
-        this._createMarker(work.coords, `${work.type}`);
-    });
+    this.map.on("click", this._showForm.bind(this));
+
+    if (this.workouts) {
+      this.workouts.forEach((work) => {
+        work.className = "marker";
+        this._createMarker(work.coords, `${work.type}`, work.type);
+      });
     }
-    
   }
 
   // ? Create marker function
-  _createMarker(coords, message) {
-    var marker = new mapboxgl.Marker().setLngLat(coords).addTo(this.#map);
-    let sign = `${this.workout && this.workout.type === "Running" ? '🏃‍♂️' : '🚴‍♀️'}`
+  _createMarker(coords, message, type) {
+    
+    let cycImage  = "https://cdn4.iconfinder.com/data/icons/baby-child-children-kids/100/baby-18-512.png";
+    let runImage = "https://mpng.subpng.com/20180606/iko/kisspng-trail-running-computer-icons-sport-trail-running-5b17b38ff23611.3105823315282799519921.jpg"
+    var el = document.createElement("div");
+    el.className = "marker";
+    el.style.backgroundImage =`url(${(type === "Running") ? runImage : cycImage})`;
+    // el.style.background= "🏃‍♂️";
+
+    el.style.width =  "40px";
+    el.style.height = "40px";
+    el.style.backgroundRepeat = "no-repeat";
+    
+    el.style.backgroundSize = "100%";
+
+    var marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(this.map);
+    let sign = `${
+      type === "Running" ? "🏃‍♂️" : "🚴‍♀️"
+    }`;
 
     var popup = new mapboxgl.Popup({
       closeOnClick: false,
       anchor: "bottom",
-      offset: 16,
+      offset: 9,
+
       // className:
     })
       .setLngLat(coords)
       .setHTML(`<h3> ${sign} ${message}</h3>`)
-      .addTo(this.#map);
+      .addTo(this.map);
   }
 
   // ? show form on click on map
 
   _showForm(e) {
-    this.#mapEvent = e;
+    this.mapEvent = e;
     form.classList.remove("hidden");
     inputDistance.focus();
-    this.#lngLat = e.lngLat; // mapbox using it in reverse lng first
+    this.lngLat = e.lngLat; // mapbox using it in reverse lng first
     // let { lng, lat } = e.lngLat;
     // createMarker([lng, lat], 'workout');
     console.log(e.lngLat);
   }
 
   // ? hide form
-  _hideForm(){
+  _hideForm() {
     inputDistance.value = inputDuration.value = "";
     inputCadence.value = inputElevation.value = "";
     form.classList.add("hidden");
@@ -128,7 +147,9 @@ class App {
 
   _renderWorkoutList(workout) {
     let html = `
-      <li class="workout workout--${workout.type.toLowerCase()}" data-id="${workout.id}">
+      <li class="workout workout--${workout.type.toLowerCase()}" data-id="${
+      workout.id
+    }">
       <h2 class="workout__title">${workout.description}</h2>
       <div class="workout__details">
         <span class="workout__icon">🏃‍♂️</span>
@@ -180,7 +201,7 @@ class App {
   // ? Submit form / or create new workout
   _submitForm(e) {
     e.preventDefault();
-    let { lng, lat } = this.#lngLat;
+    let { lng, lat } = this.lngLat;
 
     // * Fetch the form values
     const type = inputType.value;
@@ -225,39 +246,37 @@ class App {
     this._renderWorkoutList(this.workout);
 
     this._hideForm();
-
-   
   }
 
-  _moveMapToPosition(e){
+  _moveMapToPosition(e) {
     let workOutEl = e.target.closest(".workout");
-    
+
     console.log(this.workouts);
 
-    let workout = this.workouts.find(work => {
-      return work.id == workOutEl.dataset.id
+    let workout = this.workouts.find((work) => {
+      return work.id == workOutEl.dataset.id;
     });
 
-    if(workout){
-      this.#map.flyTo({
-        center: workout.coords, essential: true
+    if (workout) {
+      this.map.flyTo({
+        center: workout.coords,
+        essential: true,
       });
     }
-    
   }
 
-  _setToLocalStorage(){
+  _setToLocalStorage() {
     localStorage.setItem("workouts", JSON.stringify(this.workouts));
   }
 
-  _getFromLocalStorage(){
+  _getFromLocalStorage() {
     let data = JSON.parse(localStorage.getItem("workouts"));
-    
-    if(!data) return;
+
+    if (!data) return;
     this.workouts = data;
 
-    this.workouts.forEach(work => {
-        this._renderWorkoutList(work);
+    this.workouts.forEach((work) => {
+      this._renderWorkoutList(work);
     });
   }
 }

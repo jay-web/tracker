@@ -221,13 +221,23 @@ a:visited {
 .mapboxgl-popup-content {
   /* background-color: var(--color-brand--2); */
   border-left: 5px solid var(--color-brand--1) !important;
-  background: black !important;
-  color: #fff;
-  width: 130%;
+  /* background: black !important; */
+  color: #000;
+  width: 110%;
 }
 .mapboxgl-popup-close-button{
-  color: #fff;
+  color: #000;
   font-size: large;
   
 }
 
+
+.marker{
+  background-image:🏃‍♂️;
+  /* background-image: "/Users/apple/projects/javascript/tracker/icon.png"; */
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
