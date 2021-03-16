@@ -205,7 +205,7 @@ class App {
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
-    console.log(type);
+    
     // * if workout is running, create running workout
     if (type === "running") {
       const cadence = +inputCadence.value;
@@ -214,6 +214,7 @@ class App {
 
       if (!isNumber || !isPositive) {
         alert("Please enter correct values");
+        return;
       } else {
         this.workout = new Running([lng, lat], distance, duration, cadence);
       }
@@ -227,12 +228,13 @@ class App {
 
       if (!isNumber || !isPositive) {
         alert("Please enter correct values");
+        return;
       } else {
         this.workout = new Cycling([lng, lat], distance, duration, elevGain);
       }
     }
 
-    console.log("workout", this.workout);
+    
     // * Create the marker on map
     this._createMarker([lng, lat], `${this.workout.type}`);
     // (this.workout === undefined || this.workout.type === "Running") ? "workout--running" : "workout--cycling"
@@ -247,19 +249,19 @@ class App {
   }
 
   _moveMapToPosition(e) {
-      console.log(e.target.classList);
+     
     let workOutEl = e.target.closest(".workout");
-    console.log(workOutEl);
+    
     // console.log(this.workouts);
     if(e.target.classList[0] == "delete__workout"){
       
       let workouts = this.workouts.filter((work) => {
-        console.log(work.id[0]);
+        
          if(work.id[0] !== workOutEl.dataset.id){
            return work;
          }
       });
-      console.log(workouts);
+     
       this.workouts = workouts;
       this._setToLocalStorage();
       this._getFromLocalStorage();
