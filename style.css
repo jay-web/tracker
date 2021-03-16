@@ -242,6 +242,15 @@ a:visited {
   cursor: pointer;
 }
 
-.delete__sign{
- 
+.delete__workout{
+  padding: .4rem .5rem;
+  background-color: olivedrab;
+  font-size: .9rem;
+  width: 90px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete__workout:hover{
+  color: #000;
 }

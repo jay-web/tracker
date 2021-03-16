@@ -147,7 +147,7 @@ class App {
   _renderWorkoutList(workout) {
     let html = `
       <li class="workout workout--${workout.type.toLowerCase()}" data-id="${ workout.id}">
-      <h6 class="delete__workout">Cross</h6>
+      <span class="delete__workout">Remove workout</span>
       <h2 class="workout__title">${workout.description} </h2>
       <div class="workout__details">
         <span class="workout__icon">🏃‍♂️</span>
