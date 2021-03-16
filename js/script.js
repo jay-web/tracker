@@ -7,6 +7,7 @@ const inputDistance = document.querySelector(".form__input--distance");
 const inputDuration = document.querySelector(".form__input--duration");
 const inputCadence = document.querySelector(".form__input--cadence");
 const inputElevation = document.querySelector(".form__input--elevation");
+const deleteButton = document.querySelector(".delete__workout");
 
 // let map, mapEvent;
 // let lngLat;
@@ -19,11 +20,9 @@ class App {
     this._getCurrentLocation();
     form.addEventListener("submit", this._submitForm.bind(this));
     inputType.addEventListener("change", this._toggleformFields);
-    containerWorkouts.addEventListener(
-      "click",
-      this._moveMapToPosition.bind(this)
-    );
-    this.workout;
+    containerWorkouts.addEventListener("click", this._moveMapToPosition.bind(this));
+    // deleteButton.addEventListener("click", this._deleteWorkout.bind(this));
+  
     this.workouts = [];
     this.mapZoomLevel = 14;
     this._getFromLocalStorage();
@@ -147,10 +146,9 @@ class App {
 
   _renderWorkoutList(workout) {
     let html = `
-      <li class="workout workout--${workout.type.toLowerCase()}" data-id="${
-      workout.id
-    }">
-      <h2 class="workout__title">${workout.description}</h2>
+      <li class="workout workout--${workout.type.toLowerCase()}" data-id="${ workout.id}">
+      <h6 class="delete__workout">Cross</h6>
+      <h2 class="workout__title">${workout.description} </h2>
       <div class="workout__details">
         <span class="workout__icon">🏃‍♂️</span>
         <span class="workout__value">${workout.distance}</span>
@@ -249,22 +247,40 @@ class App {
   }
 
   _moveMapToPosition(e) {
+      console.log(e.target.classList);
     let workOutEl = e.target.closest(".workout");
-
-    console.log(this.workouts);
-
-    let workout = this.workouts.find((work) => {
-      return work.id == workOutEl.dataset.id;
-    });
-
-    if (workout) {
-      this.map.flyTo({
-        center: workout.coords,
-        essential: true,
+    console.log(workOutEl);
+    // console.log(this.workouts);
+    if(e.target.classList[0] == "delete__workout"){
+      
+      let workouts = this.workouts.filter((work) => {
+        console.log(work.id[0]);
+         if(work.id[0] !== workOutEl.dataset.id){
+           return work;
+         }
       });
+      console.log(workouts);
+      this.workouts = workouts;
+      this._setToLocalStorage();
+      this._getFromLocalStorage();
+      location.reload();
+    }else{
+      let workout = this.workouts.find((work) => {
+        return work.id == workOutEl.dataset.id;
+      });
+  
+      if (workout) {
+        this.map.flyTo({
+          center: workout.coords,
+          essential: true,
+        });
+      }
     }
+
+    
   }
 
+  
   _setToLocalStorage() {
     localStorage.setItem("workouts", JSON.stringify(this.workouts));
   }
