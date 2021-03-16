@@ -25,7 +25,8 @@ class App {
     containerWorkouts.addEventListener("click", this._moveMapToPosition.bind(this));
     this.workout;
     this.workouts = [];
-    this.mapZoomLevel =  15;
+    this.mapZoomLevel =  14;
+    this._getFromLocalStorage();
   }
 
   // get current location
@@ -59,6 +60,13 @@ class App {
 
     // Handling click on map event
     this.#map.on("click", this._showForm.bind(this));
+    
+    if(this.workouts){
+      this.workouts.forEach(work => {
+        this._createMarker(work.coords, `${work.type}`);
+    });
+    }
+    
   }
 
   // ? Create marker function
@@ -212,6 +220,8 @@ class App {
 
     this.workouts.push(this.workout);
 
+    this._setToLocalStorage();
+
     this._renderWorkoutList(this.workout);
 
     this._hideForm();
@@ -234,6 +244,21 @@ class App {
       });
     }
     
+  }
+
+  _setToLocalStorage(){
+    localStorage.setItem("workouts", JSON.stringify(this.workouts));
+  }
+
+  _getFromLocalStorage(){
+    let data = JSON.parse(localStorage.getItem("workouts"));
+    
+    if(!data) return;
+    this.workouts = data;
+
+    this.workouts.forEach(work => {
+        this._renderWorkoutList(work);
+    });
   }
 }
 
