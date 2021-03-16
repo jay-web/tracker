@@ -1,2 +1,5 @@
-*.png
+.DS_Store
+Tracker-architecture-final.png
+tracker.png
+
 # config.js
