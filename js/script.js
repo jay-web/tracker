@@ -22,7 +22,10 @@ class App {
     this._getCurrentLocation();
     form.addEventListener("submit", this._submitForm.bind(this));
     inputType.addEventListener("change", this._toggleformFields);
+    containerWorkouts.addEventListener("click", this._moveMapToPosition.bind(this));
     this.workout;
+    this.workouts = [];
+    this.mapZoomLevel =  15;
   }
 
   // get current location
@@ -49,7 +52,7 @@ class App {
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
       center: coords, // starting position [lng, lat]
-      zoom: 15, // starting zoom
+      zoom: this.mapZoomLevel, // starting zoom
     });
 
     this._createMarker(coords, "you are here!");
@@ -117,7 +120,7 @@ class App {
 
   _renderWorkoutList(workout) {
     let html = `
-      <li class="workout workout--running" data-id="1234567890">
+      <li class="workout workout--${workout.type.toLowerCase()}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
       <div class="workout__details">
         <span class="workout__icon">🏃‍♂️</span>
@@ -207,11 +210,30 @@ class App {
     this._createMarker([lng, lat], `${this.workout.type}`);
     // (this.workout === undefined || this.workout.type === "Running") ? "workout--running" : "workout--cycling"
 
+    this.workouts.push(this.workout);
+
     this._renderWorkoutList(this.workout);
 
     this._hideForm();
 
    
+  }
+
+  _moveMapToPosition(e){
+    let workOutEl = e.target.closest(".workout");
+    
+    console.log(this.workouts);
+
+    let workout = this.workouts.find(work => {
+      return work.id == workOutEl.dataset.id
+    });
+
+    if(workout){
+      this.#map.flyTo({
+        center: workout.coords, essential: true
+      });
+    }
+    
   }
 }
 
