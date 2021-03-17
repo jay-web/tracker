@@ -71,37 +71,40 @@ class App {
   }
 
   // ? Create marker function
-  _createMarker(coords, message, type) {
+ // ? Create marker function
+ _createMarker(coords, message, type) {
     
-    let cycImage  = "https://cdn4.iconfinder.com/data/icons/baby-child-children-kids/100/baby-18-512.png";
-    let runImage = "https://mpng.subpng.com/20180606/iko/kisspng-trail-running-computer-icons-sport-trail-running-5b17b38ff23611.3105823315282799519921.jpg"
-    var el = document.createElement("div");
-    el.className = "marker";
-    el.style.backgroundImage =`url(${(type === "Running") ? runImage : cycImage})`;
-    // el.style.background= "🏃‍♂️";
+  let cycImage  = "https://cdn4.iconfinder.com/data/icons/baby-child-children-kids/100/baby-18-512.png";
+  let runImage = "https://mpng.subpng.com/20180606/iko/kisspng-trail-running-computer-icons-sport-trail-running-5b17b38ff23611.3105823315282799519921.jpg";
+  let nativeImage = "https://i.pinimg.com/originals/22/11/f8/2211f8cc5b35a7cd807586328bc33e35.png";
 
-    el.style.width =  "40px";
-    el.style.height = "40px";
-    el.style.backgroundRepeat = "no-repeat";
-    
-    el.style.backgroundSize = "100%";
+  var el = document.createElement("div");
+  el.className = "marker";
+  el.style.backgroundImage =`url(${(type === "Running") ? runImage : (type === null) ? nativeImage : cycImage})`;
+  // el.style.background= "🏃‍♂️";
 
-    var marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(this.map);
-    let sign = `${
-      type === "Running" ? "🏃‍♂️" : "🚴‍♀️"
-    }`;
+  el.style.width =  "40px";
+  el.style.height = "40px";
+  el.style.backgroundRepeat = "no-repeat";
+  
+  el.style.backgroundSize = "100%";
 
-    var popup = new mapboxgl.Popup({
-      closeOnClick: false,
-      anchor: "bottom",
-      offset: 9,
+  var marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(this.map);
+  let sign = `${
+    type === "Running" ? "🏃‍♂️" : "🚴‍♀️"
+  }`;
 
-      // className:
-    })
-      .setLngLat(coords)
-      .setHTML(`<h3> ${sign} ${message}</h3>`)
-      .addTo(this.map);
-  }
+  var popup = new mapboxgl.Popup({
+    closeOnClick: false,
+    anchor: "bottom",
+    offset: 16,
+
+    // className:
+  })
+    .setLngLat(coords)
+    .setHTML(`<h3> ${sign} ${message}</h3>`)
+    .addTo(this.map);
+}
 
   // ? show form on click on map
 
@@ -236,7 +239,7 @@ class App {
 
     
     // * Create the marker on map
-    this._createMarker([lng, lat], `${this.workout.type}`);
+    this._createMarker([lng, lat], `${this.workout.type}`, this.workout.type);
     // (this.workout === undefined || this.workout.type === "Running") ? "workout--running" : "workout--cycling"
 
     this.workouts.push(this.workout);
